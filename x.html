@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="lo">
 <head>
@@ -20,14 +19,8 @@
 --radius:14px;
 }
 *{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:"Noto Sans Lao", Inter, system-ui;
-  background: var(--bg);
-  color:#111827;
-  padding:22px;
-}
-.wrap{max-width:1100px;margin:0 auto;}
+body{margin:0;font-family:"Noto Sans Lao", Inter, system-ui;background: var(--bg);color:#111827;padding:22px}
+.wrap{max-width:1100px;margin:0 auto}
 header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
 h1{margin:0;font-size:20px;color:var(--accent);font-weight:700}
 #datetime{font-size:50px;color:var(--muted)}
@@ -65,9 +58,59 @@ button.btn:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(2,6,23,0
 .btns{justify-content:center;flex-wrap:wrap}
 [contenteditable="true"]{font-size:16px;padding:8px}
 }
+
+/* --- modal styles (small, unobtrusive, matches design) --- */
+.modal-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(2,6,23,0.45);
+  z-index:1200;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+.modal {
+  width:100%;
+  max-width:420px;
+  background:var(--card);
+  border-radius:14px;
+  padding:18px;
+  box-shadow:0 18px 50px rgba(2,6,23,0.3);
+  transform:translateY(0);
+  animation:modalIn .22s ease;
+}
+.modal h3{margin:0 0 8px;color:var(--accent-2)}
+.modal p{margin:0 0 14px;color:var(--muted)}
+.modal .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:8px}
+.modal .modal-actions .btn{min-width:110px}
+.modal .preview{white-space:pre-wrap;background:#f7f9fb;padding:10px;border-radius:8px;border:1px solid rgba(2,6,23,0.04);max-height:260px;overflow:auto;font-family:monospace;font-size:13px;color:#111}
+/* small phone input */
+.modal .phoneRow{display:flex;gap:8px;align-items:center}
+.modal input[type="text"]{flex:1;padding:8px;border-radius:10px;border:1px solid rgba(2,6,23,0.06);outline:none}
+
+/* animations */
+@keyframes modalIn {
+  from{opacity:0; transform:translateY(-10px)}
+  to{opacity:1; transform:translateY(0)}
+}
 </style>
 </head>
 <body>
+  <!-- ปุ่มกลับหน้า Home -->
+<button id="ລາຍງານຄ່າໃຊ້ຈ່າຍ">🛒ລາຍງານຄ່າໃຊ້ຈ່າຍ</button>
+<script>// ปุ่มกลับหน้า Home
+document.getElementById('ລາຍງານຄ່າໃຊ້ຈ່າຍ').addEventListener('click', ()=>{
+  window.location.href = 'ລາຍຈ່າຍ.html'; // เปลี่ยนเป็น URL หน้า Home ของคุณ
+});
+</script>
+<style>
+  /* Home button */
+  #ລາຍງານຄ່າໃຊ້ຈ່າຍ { margin-bottom:15px; padding:8px 16px; background:#0ee6a5; color:rgb(0, 0, 0); border:none; border-radius:6px; font-size:26px; }
+  #ລາຍງານຄ່າໃຊ້ຈ່າຍ:hover { background:#ff0000fa; }
+
+</style>
+  
 <div class="wrap">
 <header>
 <h1>ຕາຕະລາງ</h1>
@@ -78,12 +121,15 @@ button.btn:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(2,6,23,0
 <div class="grid">
 <!-- CREDIT -->
 <div class="group" aria-labelledby="g-credit">
-<div class="title"><div class="dot credit"></div><div><h3 id="g-credit">CREDIT</h3><p>ເຂົ້າ-ອອກ</p></div></div>
+<div class="title"><div class="dot credit"></div><div><h3 id="g-credit">CREDIT(IN)+CASH(ເປີດ)	</h3><p>ຍອດເປີດ-ເຄດິດເຂົ້າ</p></div></div>
 <table>
 <thead><tr><th>ລາຍການ</th><th>ຈໍານວນ</th></tr></thead>
 <tbody>
-<tr><td class="label">CREDIT IN</td><td class="value" id="credit_in" contenteditable="true">73007</td></tr>
-<tr><td class="label">CREDIT OUT</td><td class="value" id="credit_out" contenteditable="true">73931</td></tr>
+<tr><td class="label">CASH (ເປີດ)</td><td class="value" id="cash_open" contenteditable="true">0</td></tr>
+<tr><td class="label">CREDIT IN.(OL)<img src="logo4.png" alt="" width="20px"></td><td class="value" id="credit_in2" contenteditable="true">0</td></tr>
+<tr><td class="label">CREDIT IN.(OL)<img src="logo5.png" alt="" width="20px"></td><td class="value" id="credit_in3" contenteditable="true">0</td></tr>
+<tr><td class="label">CREDIT IN.<img src="logo4.png" alt="" width="20px"></td><td class="value" id="credit_in4" contenteditable="true">0</td></tr>
+<tr><td class="label">CREDIT IN.<img src="logo5.png" alt="" width="20px"></td><td class="value" id="credit_in5" contenteditable="true">0</td></tr>
 <tr><td class="label">Total1</td><td class="value amount accent" id="total1">0</td></tr>
 </tbody>
 </table>
@@ -91,26 +137,37 @@ button.btn:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(2,6,23,0
 
 <!-- CASH / BANK -->
 <div class="group" aria-labelledby="g-cash">
-<div class="title"><div class="dot cash"></div><div><h3 id="g-cash">ເງິນສົດ / ບັນຊີ</h3><p>ຍອດປີເປີດ-ປິດ</p></div></div>
+<div class="title"><div class="dot cash"></div><div><h3 id="g-cash">ເງິນສົດ / ບັນຊີ</h3><p>ຍອດປິດ-ເຄດິດອອກ</p></div></div>
 <table>
 <thead><tr><th>ລາຍການ</th><th>ຈໍານວນ</th></tr></thead>
 <tbody>
-<tr><td class="label">CASH (ເປີດ)</td><td class="value" id="cash_open" contenteditable="true">842</td></tr>
-<tr><td class="label">CASH (ປິດ)</td><td class="value" id="cash_close" contenteditable="true">209</td></tr>
-<tr></td></td></tr>
+<tr><td class="label">CASH (ປິດ)</td><td class="value" id="cash_close" contenteditable="true">0</td></tr>
+<tr><td class="label">CREDIT OUT.(OL)<img src="logo4.png" alt="" width="20px"></td><td class="value" id="credit_out" contenteditable="true">0</td></tr>
+<tr><td class="label">CREDIT OUT.(OL)<img src="logo5.png" alt="" width="20px"></td><td class="value" id="credit_out2" contenteditable="true">0</td></tr>
+<tr><td class="label">CREDIT OUT<img src="logo4.png" alt="" width="20px"></td><td class="value" id="credit_out3" contenteditable="true">0</td></tr>
+<tr><td class="label">CREDIT OUT<img src="logo5.png" alt="" width="20px"></td><td class="value" id="credit_out4" contenteditable="true">0</td></tr>
+<tr><td class="label">BANK CLOSE</td><td class="value" id="bank_close" contenteditable="true">0</td></tr>
 </tbody>
 </table>
 </div>
 
 <!-- OTHER -->
 <div class="group" style="grid-column:1 / -1" aria-labelledby="g-other">
-<div class="title"><div class="dot other"></div><div><h3 id="g-other">ອື່ນໆ (Expenses)</h3><p>ລາຍຈ່າຍຕ່າງໆ</p></div></div>
+<div class="title"><div class="dot other"></div><div><h3 id="g-other">ອື່ນໆ (Expenses)</h3><p>ເງີນ-ລາຍຈ່າຍຕ່າງໆ  </p></div></div>
 <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:10px">
-<div><div style="font-size:12px;color:var(--muted)"><img src="logo1.jpg" alt="" width="30px">cash(ເງິນສົດ)</div><div id="cash_expense" contenteditable="true" class="value">100</div></div>
-<div><div style="font-size:12px;color:var(--muted)">TICKET(ບິນ)</div><div id="ticket" contenteditable="true" class="value">737</div></div>
-<div><div style="font-size:12px;color:var(--muted)">promo(ໂປໂມຊັນ)</div><div id="promo" contenteditable="true" class="value">100</div></div>
-<div><div style="font-size:12px;color:var(--muted)">expense(ລາຍຈ່າຍ)</div><div id="expense" contenteditable="true" class="value">100</div></div>
-<div><div style="font-size:12px;color:var(--muted)"><img src="logo3.png" alt="" width="15px">cash(ເງິນສົດ)BCEL(ເງິນບັນຊີ)</div><div id="cash2" contenteditable="true" class="value">100</div></div>
+<div><div style="font-size:12px;color:var(--muted)"><img src="logo1.jpg" alt="" width="30px">cash(ເງິນສົດ)</div><div id="cash" contenteditable="true" class="value">0</div></div>
+<div><div style="font-size:12px;color:var(--muted)"><img src="bin.jpeg" alt="" width="15px">TICKET(ບິນ)</div><div id="ticket" contenteditable="true" class="value">0</div></div>
+<div><div style="font-size:12px;color:var(--muted)">promo(ໂປໂມຊັນ)</div><div id="promo" contenteditable="true" class="value">0</div></div>
+<div><div style="font-size:12px;color:var(--muted)">expense(ລາຍຈ່າຍ)</div><div id="expense" contenteditable="true" class="value">0</div></div>
+<div><div style="font-size:12px;color:var(--muted)">expense(OL)(ລາຍຈ່າຍonline)</div><div id="expenseOL" contenteditable="true" class="value">0</div></div>
+<div><div style="font-size:12px;color:var(--muted)"><img src="batbc.png" alt="" width="40px">ບາດ</div><div id="cash2" contenteditable="true" class="value">0</div></div>
+<div><div style="font-size:12px;color:var(--muted)"><img src="batldb.png" alt="" width="40px">ບາດ</div><div id="cash3" contenteditable="true" class="value">0</div></div>
+<div><div style="font-size:12px;color:var(--muted)">cash4ກີບ</div><div id="cash4" class="value" style="background:#eee;">0</div></div>
+<div><div style="font-size:12px;color:var(--muted)"><img src="kipldb.png" alt="" width="40px">kip</div><div id="kip" contenteditable="true" class="value">0</div></div>
+<div><div style="font-size:12px;color:var(--muted)">cash5ກີບ</div><div id="cash5" class="value" style="background:#eee;">0</div></div>
+<div><div style="font-size:12px;color:var(--muted)"><img src="kipbc.png" alt="" width="40px">kip2</div><div id="kip2" contenteditable="true" class="value">0</div></div>
+<div><div style="font-size:12px;color:var(--muted)">cash6ກີບ</div><div id="cash6" class="value" style="background:#eee;">0</div></div>
+<div><div style="font-size:12px;color:var(--muted)"><img src="kipbc.png" alt="" width="40px">kip3</div><div id="kip3" contenteditable="true" class="value">0</div></div>
 </div>
 <div class="totalCard">
 <div><div class="label">TotalExpenses</div></div>
@@ -135,6 +192,43 @@ button.btn:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(2,6,23,0
 <button class="btn green" id="sendWhatsApp">💬 Send WhatsApp</button>
 </div>
 </div>
+<style>
+  .dg{
+   background-color: #02ff3d;
+   color: #f9f9f9;
+  }
+</style>
+
+<!-- Confirm Reset Modal -->
+<div id="confirmModalOverlay" class="modal-overlay" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmModalTitle">
+    <h3 id="confirmModalTitle">ຢືນຢັນການ Reset?</h3>
+    <p>ທ່ານແນ່ໃຈບໍວ່າຈະລ້າງຂໍ້ມູນທັງໝົດ? ການກົດຢືນຢັນຈະຄືນຄ່າເປັນ 0.</p>
+    <div class="modal-actions">
+      <button id="confirmYes" class="btn warn">ຢືນຢັນ</button>
+      <button id="confirmNo" class="btn ghost">ຍົກເລີກ</button>
+    </div>
+  </div>
+</div>
+
+<!-- WhatsApp Preview Modal -->
+<div id="whatsappModalOverlay" class="modal-overlay" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="whatsappModalTitle">
+    <h3 id="whatsappModalTitle">Preview ຂໍ້ຄວາມ (WhatsApp)</h3>
+    <p>ກວດເບິ່ງຂໍ້ຄວາມກ່ອນສົ່ງ — ຕັ້ງເບີ WhatsApp ຈ່າຍບໍ່ຕ້ອງພາຍໃນ (+856...)</p>
+    <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center">
+      <div class="phoneRow" style="flex:1">
+        <input id="waPhone" type="text" placeholder="85620xxxxxxxx" />
+      </div>
+    </div>
+    <div class="preview" id="waPreview" aria-live="polite"></div>
+    <div class="modal-actions">
+      <button id="confirmSend" class="btn green">✅ ສົ່ງ</button>
+      <button id="cancelSend" class="btn ghost">❌ ຍົກເລີກ</button>
+    </div>
+  </div>
+</div>
+
 
 <script>
 // --- datetime ---
@@ -147,111 +241,464 @@ function upd(){
 upd(); setInterval(upd,1000);
 })();
 
-// --- editable ids & helpers ---
-const editableIds = ["credit_in","credit_out","cash_open","cash_close","bank_close","cash_expense","ticket","promo","expense","cash2"];
-function parseCell(id){ const el=document.getElementById(id); return el ? parseFloat(el.textContent.replace(/,/g,'')) || 0 : 0; }
-function fmt(n){ return Number(n).toLocaleString(); }
-
-// --- calculations ---
-function calculateAll(){
-const total1 = parseCell('credit_in') - parseCell('credit_out');
-document.getElementById('total1').textContent = fmt(total1);
-const totalExpenses = parseCell('cash_expense') + parseCell('ticket') + parseCell('promo') + parseCell('cash2') + parseCell('expense');
-document.getElementById('totalExpenses').textContent = fmt(totalExpenses);
-const grand = total1 + parseCell('cash_open') - parseCell('cash_close') - parseCell('bank_close');
-document.getElementById('grand_total').textContent = fmt(grand);
-// store
-editableIds.forEach(id=>localStorage.setItem(id, parseCell(id)));
-localStorage.setItem('totalExpenses', totalExpenses);
-localStorage.setItem('total1', total1);
-localStorage.setItem('grand_total', grand);
+// --- Editable IDs ---
+const editableIds = ["credit_in","credit_in2","credit_in3","credit_in4","credit_in5","credit_out","credit_out2","credit_out3","credit_out4","cash_open","cash_close","bank_close","cash","ticket","promo","expense","expenseOL","cash2","cash3","kip","kip2","kip3",];
+// helper: parse number from element (supports comma/space)
+function parseCell(id){
+  const el=document.getElementById(id);
+  if(!el) return 0;
+  const txt = el.textContent || el.innerText || '';
+  // remove commas and spaces
+  const clean = txt.replace(/[, ]+/g,'').trim();
+  const n = parseFloat(clean);
+  return Number.isFinite(n) ? n : 0;
+}
+// format with comma
+function fmt(n){ 
+  if(!Number.isFinite(n)) return '0';
+  return Number(n).toLocaleString();
 }
 
-// attach listeners
-editableIds.forEach(id=>{
-const el=document.getElementById(id);
-if(!el) return;
-el.addEventListener('input', ()=>{ calculateAll(); });
-el.addEventListener('blur', ()=> { el.textContent = fmt(parseCell(id)); calculateAll(); });
-});
+// --- Calculation ---
+function calculateAll(){
+  const kipVal = parseCell('kip');
+  const kip2Val = parseCell('kip2');
+  const kip3Val = parseCell('kip3');
+  const cash4Val = (kipVal/640) || 0;
+  const cash5Val = (kip2Val/640) || 0;
+  const cash6Val = (kip3Val/640) || 0;
 
-// load saved
-window.addEventListener('load', ()=>{
+  // show results with formatting
+  document.getElementById('cash4').textContent = fmt(Math.round(cash4Val));
+  document.getElementById('cash5').textContent = fmt(Math.round(cash5Val));
+  document.getElementById('cash6').textContent = fmt(Math.round(cash6Val));
+
+  const total1 = parseCell('credit_in')-parseCell('credit_in2')-parseCell('credit_in3')-parseCell('credit_in4')-parseCell('credit_in5')
+                + parseCell('credit_out')+parseCell('credit_out2')+parseCell('credit_out3')+parseCell('credit_out4');
+  document.getElementById('total1').textContent = fmt(total1);
+
+  const totalExpenses = parseCell('cash') + parseCell('ticket') + parseCell('promo') 
+                        + parseCell('cash2') + parseCell('cash3') + cash4Val + cash5Val + cash6Val
+                        + parseCell('expense') + parseCell('expenseOL');
+  document.getElementById('totalExpenses').textContent = fmt(Math.round(totalExpenses));
+
+  // Grand total: credit net + cash_open - cash_close + bank_close
+  const grand = parseCell('cash_close')-parseCell('cash_open')+parseCell('total1') ;
+  document.getElementById('grand_total').textContent = fmt(Math.round(grand));
+}
+
+// --- auto calculate on edit ---
+// Attach 'input' and 'blur' events to keep formatting friendly
 editableIds.forEach(id=>{
-    const v = localStorage.getItem(id);
-    if(v !== null && document.getElementById(id)) document.getElementById(id).textContent = fmt(Number(v));
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.addEventListener('input', calculateAll);
+  el.addEventListener('blur', ()=>{
+    const v = parseCell(id);
+    el.textContent = fmt(Math.round(v));
+  });
 });
 calculateAll();
-});
 
-// Paste CSV
-document.getElementById('pasteData').addEventListener('click', ()=>{
-const txt = prompt("ໃສ່ຂໍ້ມູນ CSV (คั่นด้วยคอมม่า) \nລຳດັບ: credit_in,credit_out,cash_open,cash_close,bank_close,cash_expense,ticket,promo,expense,cash2");
-if(!txt) return;
-const arr = txt.split(',');
-const ids = ["credit_in","credit_out","cash_open","cash_close","bank_close","cash_expense","ticket","promo","expense","cash2"];
-arr.forEach((v,i)=>{ if(ids[i] && document.getElementById(ids[i])) document.getElementById(ids[i]).textContent = String(v||'0').trim(); });
-calculateAll();
+// --- Buttons ---
+// Paste from clipboard
+document.getElementById('pasteData').addEventListener('click', async ()=>{
+  try{
+    const text = await navigator.clipboard.readText();
+    const rows = text.split('\n').map(r=>r.split('\t'));
+    rows.forEach(r=>{
+      const id = r[0]?.trim();
+      const val = r[1]?.trim();
+      if(id && document.getElementById(id)) document.getElementById(id).textContent = val;
+    });
+    calculateAll();
+  }catch(e){alert('ບໍ່ສາມາດວາງຂໍ້ມູນໄດ້');}
 });
 
 // Copy CSV
 document.getElementById('copy').addEventListener('click', ()=>{
-const obj = {};
-editableIds.concat(['total1','totalExpenses','grand_total']).forEach(id=>{ obj[id]=document.getElementById(id)?.textContent.replace(/,/g,'')||'0'; });
-navigator.clipboard.writeText(Object.values(obj).join(',')).then(()=> alert('Copied CSV ✅'));
+  const headers = ["ID","Value"];
+  const data = editableIds.map(id=>[id, parseCell(id)]);
+  const csv = [headers.join(','), ...data.map(r=>r.join(','))].join('\n');
+  navigator.clipboard.writeText(csv).then(()=>alert('Copied CSV!'));
 });
 
 // Download PNG
 document.getElementById('downloadImg').addEventListener('click', ()=>{
-html2canvas(document.getElementById('reportCard')).then(canvas=>{
-  const link=document.createElement('a');
-  link.download = `report_${Date.now()}.png`;
-  link.href = canvas.toDataURL('image/png');
-  link.click();
-});
+  html2canvas(document.getElementById('reportCard')).then(canvas=>{
+    const link = document.createElement('a');
+    link.download = 'report.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
 });
 
 // Download XLSX
 document.getElementById('downloadXlsx').addEventListener('click', ()=>{
-const obj = {};
-editableIds.concat(['total1','totalExpenses','grand_total']).forEach(id=>{ obj[id]=document.getElementById(id)?.textContent.replace(/,/g,'')||'0'; });
-const ws = XLSX.utils.json_to_sheet([obj]);
-const wb = XLSX.utils.book_new();
-XLSX.utils.book_append_sheet(wb, ws, "Report");
-XLSX.writeFile(wb, `report_${Date.now()}.xlsx`);
+  const wb = XLSX.utils.book_new();
+  const ws_data = [["ID","Value"], ...editableIds.map(id=>[id, parseCell(id)])];
+  const ws = XLSX.utils.aoa_to_sheet(ws_data);
+  XLSX.utils.book_append_sheet(wb, ws, 'Report');
+  XLSX.writeFile(wb, 'report.xlsx');
 });
 
-// Reset
-document.getElementById('reset').addEventListener('click', ()=>{
-if(!confirm('ຢືນຢັນຕ້ອງການ reset?')) return;
-editableIds.forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent = '0'; });
+// --- Reset modal logic ---
+const confirmOverlay = document.getElementById('confirmModalOverlay');
+const btnReset = document.getElementById('reset');
+const btnYes = document.getElementById('confirmYes');
+const btnNo = document.getElementById('confirmNo');
+
+btnReset.addEventListener('click', ()=> {
+  confirmOverlay.style.display = 'flex';
+  confirmOverlay.setAttribute('aria-hidden','false');
+});
+
+// confirm reset
+btnYes.addEventListener('click', ()=>{
+  // optional: keep a short snapshot if you want undo (not implemented here)
+  editableIds.forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.textContent = '0';
+  });
+  calculateAll();
+  confirmOverlay.style.display = 'none';
+  confirmOverlay.setAttribute('aria-hidden','true');
+  alert("ລ້າງຂໍ້ມູນສຳເລັດ!");
+});
+
+// cancel reset
+btnNo.addEventListener('click', ()=>{
+  confirmOverlay.style.display = 'none';
+  confirmOverlay.setAttribute('aria-hidden','true');
+});
+
+// click outside modal to close (for accessibility)
+confirmOverlay.addEventListener('click', (e)=>{
+  if(e.target === confirmOverlay){
+    confirmOverlay.style.display = 'none';
+    confirmOverlay.setAttribute('aria-hidden','true');
+  }
+});
+
+// --- WhatsApp modal logic ---
+const waOverlay = document.getElementById('whatsappModalOverlay');
+const btnSend = document.getElementById('sendWhatsApp');
+const btnCancelSend = document.getElementById('cancelSend');
+const btnConfirmSend = document.getElementById('confirmSend');
+const waPreview = document.getElementById('waPreview');
+const waPhone = document.getElementById('waPhone');
+
+function getLabelForId(id){
+  const el = document.getElementById(id);
+  if(!el) return id;
+  const tr = el.closest('tr');
+  if(!tr) return id;
+  const labelCell = tr.querySelector('td.label');
+  return labelCell ? labelCell.innerText.trim() : id;
+}
+
+function buildMessage(){
+  const now = new Date();
+  const dateStr = `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+  
+  let lines = [];
+  lines.push(`📊 ສະຫຼຸບລາຍຮັບ - ລາຍຈ່າຍ (${dateStr})`);
+  lines.push('');
+  editableIds.forEach(id=>{
+    const el = document.getElementById(id);
+    const label = getLabelForId(id);
+    const value = fmt(parseCell(id));
+    lines.push(`• ${label}: ${value}`);
+  });
+  lines.push('');
+  lines.push(`TotalExpenses: ${document.getElementById('totalExpenses').textContent} 	฿`);
+  lines.push(`Grand Total: ${document.getElementById('grand_total').textContent} 	฿`);
+  lines.push(`ສົ່ງອອກຈາກລະບົບ: ${document.getElementById('grand_total').textContent} `);
+  return lines.join('\n');
+}
+
+
+// open preview modal + render message preview
+btnSend.addEventListener('click', ()=>{
+  waOverlay.style.display = 'flex';
+  waOverlay.setAttribute('aria-hidden','false');
+  waPhone.value = ''; // empty by default
+  waPreview.textContent = buildMessage();
+});
+
+// cancel send
+btnCancelSend.addEventListener('click', ()=>{
+  waOverlay.style.display = 'none';
+  waOverlay.setAttribute('aria-hidden','true');
+});
+
+// click outside modal to close
+waOverlay.addEventListener('click', (e)=>{
+  if(e.target === waOverlay){
+    waOverlay.style.display = 'none';
+    waOverlay.setAttribute('aria-hidden','true');
+  }
+});
+
+// confirm send: open wa.me or wa link with text
+btnConfirmSend.addEventListener('click', ()=>{
+  const phoneRaw = waPhone.value.trim();
+  const msg = buildMessage();
+  if(phoneRaw === ''){
+    // open generic WhatsApp web composer with text
+    const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+    waOverlay.style.display = 'none';
+    waOverlay.setAttribute('aria-hidden','true');
+    return;
+  }
+  // Normalize phone: remove non-digits
+  const phoneClean = phoneRaw.replace(/[^\d]/g,'');
+  if(!phoneClean){
+    alert('ໃສ່ເບີ WhatsApp ຼຍ່ອງຖືກ (ເຊັ່ນ 85620xxxxxxx)');
+    return;
+  }
+  const url = `https://wa.me/${phoneClean}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+  waOverlay.style.display = 'none';
+  waOverlay.setAttribute('aria-hidden','true');
+});
+
+// update preview if user edits phone or manually wants refresh (optional)
+waPhone.addEventListener('input', ()=> {
+  waPreview.textContent = buildMessage();
+});
+
+// --- make sure initial formatting (show commas) ---
+editableIds.forEach(id=>{
+  const el = document.getElementById(id);
+  if(el){
+    const v = parseCell(id);
+    el.textContent = fmt(Math.round(v));
+  }
+});
 calculateAll();
+// --- โหลดค่าจาก localStorage ตอนเปิดหน้า ---
+editableIds.forEach(id => {
+  const saved = localStorage.getItem(id);
+  if(saved !== null && document.getElementById(id)) {
+    document.getElementById(id).textContent = saved;
+  }
 });
 
-// Send WhatsApp
-document.getElementById('sendWhatsApp').addEventListener('click', ()=>{
-const d = {};
-editableIds.concat(['total1','totalExpenses','grand_total']).forEach(id=>{ d[id]=document.getElementById(id)?.textContent.replace(/,/g,'')||'0'; });
-const datetime = document.getElementById('datetime').textContent;
-const msg = [
-"📊 ໄລ່ເງີນ",
-`🕒 ${datetime}`,
-`CREDIT IN: ${d.credit_in}`,
-`CREDIT OUT: ${d.credit_out}`,
-`Total1: ${d.total1}`,
-`CASH OPEN: ${d.cash_open}`,
-`CASH CLOSE: ${d.cash_close}`,
-`BANK CLOSE: ${d.bank_close}`,
-`CASH EXPENSE: ${d.cash_expense}`,
-`TICKET: ${d.ticket}`,
-`PROMO: ${d.promo}`,
-`EXPENSE: ${d.expense}`,
-`BCEL: ${d.cash2}`,
-`TotalExpenses: ${d.totalExpenses}`,
-`Grand Total: ${d.grand_total}`
-].join('\n');
-window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+// --- บันทึกค่าลง localStorage ทุกครั้งที่แก้ไข ---
+editableIds.forEach(id=>{
+  const el=document.getElementById(id);
+  if(!el) return;
+  el.addEventListener('input', ()=> {
+    const v = parseCell(id);
+    localStorage.setItem(id, fmt(Math.round(v)));
+    calculateAll();
+  });
+  el.addEventListener('blur', ()=>{
+    const v = parseCell(id);
+    el.textContent = fmt(Math.round(v));
+    localStorage.setItem(id, fmt(Math.round(v)));
+  });
 });
+
+// --- Reset ก็ล้าง localStorage ด้วย ---
+btnYes.addEventListener('click', ()=>{
+  editableIds.forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.textContent = '0';
+    localStorage.removeItem(id);
+  });
+  calculateAll();
+  confirmOverlay.style.display = 'none';
+  confirmOverlay.setAttribute('aria-hidden','true');
+  alert("ລ້າງຂໍ້ມູນສຳເລັດ!");
+});
+
 </script>
+<script>
+ // Move to next row on Enter
+editableIds.forEach(id=>{
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter'){
+      e.preventDefault(); // ป้องกันขึ้นบรรทัดใหม่
+      // หา index ของ element ปัจจุบัน
+      const idx = editableIds.indexOf(id);
+      if(idx >= 0 && idx < editableIds.length-1){
+        const nextEl = document.getElementById(editableIds[idx+1]);
+        if(nextEl){
+          nextEl.focus();
+          // ถ้ามี text ก็ select อัตโนมัติ
+          if(nextEl.select) nextEl.select();
+        }
+      }
+    }
+  });
+});
+function calculateAll(){
+  const kipVal = parseCell('kip');
+  const kip2Val = parseCell('kip2');
+  const kip3Val = parseCell('kip3');
+  const cash4Val = (kipVal/640) || 0;
+  const cash5Val = (kip2Val/640) || 0;
+  const cash6Val = (kip3Val/640) || 0;
+
+  // show results with formatting
+  const cash4El = document.getElementById('cash4');
+  const cash5El = document.getElementById('cash5');
+  const cash6El = document.getElementById('cash6');
+  cash4El.textContent = fmt(Math.round(cash4Val));
+  cash5El.textContent = fmt(Math.round(cash5Val));
+  cash6El.textContent = fmt(Math.round(cash6Val));
+  cash4El.style.color = cash4Val < 0 ? 'red' : '';
+  cash5El.style.color = cash5Val < 0 ? 'red' : '';
+  cash6El.style.color = cash6Val < 0 ? 'red' : '';
+
+  const total1 = parseCell('credit_in')-parseCell('credit_in2')-parseCell('credit_in3')-parseCell('credit_in4')-parseCell('credit_in5')
+                + parseCell('credit_out')+parseCell('credit_out2')+parseCell('credit_out3')+parseCell('credit_out4');
+  const total1El = document.getElementById('total1');
+  total1El.textContent = fmt(total1);
+  total1El.style.color = total1 < 0 ? 'red' : '';
+
+  const totalExpenses = parseCell('cash') + parseCell('ticket') + parseCell('promo') 
+                        + parseCell('cash2') + parseCell('cash3') + cash4Val + cash5Val + cash6Val
+                        + parseCell('expense') + parseCell('expenseOL');
+  const totalExpensesEl = document.getElementById('totalExpenses');
+  totalExpensesEl.textContent = fmt(Math.round(totalExpenses));
+  totalExpensesEl.style.color = totalExpenses < 0 ? 'red' : '';
+
+  // Grand total: credit net + cash_open - cash_close + bank_close
+  const grand = parseCell('cash_close')-parseCell('cash_open')+parseCell('total1') ;
+  const grandEl = document.getElementById('grand_total');
+  grandEl.textContent = fmt(Math.round(grand));
+  grandEl.style.color = grand < 0 ? 'red' : '';
+}
+
+
+
+window.onload = function() {
+  document.getElementById("show").innerText = localStorage.getItem("expenseOL") || "ບໍ່ມີຂໍ້ມູນ";
+};
+</script>
+
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>โฆษณา</title>
+<style>
+  .sticky-ad {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    width: 320px;
+    max-width: calc(100% - 36px);
+    z-index: 99999;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    transition: transform .25s, opacity .25s;
+    transform-origin: 100% 100%;
+    font-family: sans-serif;
+  }
+  @media (max-width: 420px) {
+    .sticky-ad { right: 12px; left: 12px; bottom: 12px; width: auto; }
+  }
+  .sticky-ad img.ad-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+  .sticky-ad .ad-bar {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:8px 12px;
+    background: #f3f3f3;
+  }
+  .sticky-ad .ad-text {
+    font-size:14px;
+    color:#222;
+    flex:1;
+    margin-right:10px;
+  }
+  .sticky-ad button.close-btn {
+    border:0;
+    background:#ff4d4d;
+    color:#fff;
+    width:28px;
+    height:28px;
+    cursor:pointer;
+    font-size:18px;
+    font-weight:bold;
+    border-radius:50%;
+    line-height:1;
+    transition: background .2s;
+  }
+  .sticky-ad button.close-btn:hover {
+    background:#cc0000;
+  }
+  .sticky-ad.show { transform: scale(1); opacity:1; }
+  .sticky-ad.hide { transform: scale(.9); opacity:0; pointer-events:none; }
+</style>
+</head>
+<body>
+
+<!-- กล่องโฆษณา -->
+<div id="stickyAd" class="sticky-ad hide">
+  <!-- ลิงก์โฆษณาครอบเฉพาะรูป -->
+  <a id="adLink" href="https://example.com" target="_blank" rel="noopener noreferrer">
+    <img id="adImg" class="ad-img" alt="โฆษณา" loading="lazy" 
+         src="cc.jpg">
+  </a>
+  <div class="ad-bar">
+    <div class="ad-text">โฆษณาพิเศษ — คลิกเพื่อดูรายละเอียด</div>
+    <button class="close-btn" id="adCloseBtn" aria-label="ปิดโฆษณา">&times;</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const adEl   = document.getElementById('stickyAd');
+  const imgEl  = document.getElementById('adImg');
+  const closeBtn = document.getElementById('adCloseBtn');
+
+  function showAd() {
+    adEl.classList.remove('hide');
+    requestAnimationFrame(()=> adEl.classList.add('show'));
+  }
+  function hideAd() {
+    adEl.classList.remove('show');
+    adEl.classList.add('hide');
+  }
+  closeBtn.addEventListener('click', hideAd);
+  document.addEventListener('keydown', e => { if(e.key==="Escape") hideAd(); });
+
+  // ปรับขนาดภาพถ้าสูงเกินไป
+  imgEl.addEventListener('load', function(){
+    const maxH = Math.min(window.innerHeight * 0.6, 600);
+    if (imgEl.naturalHeight > maxH) {
+      imgEl.style.maxHeight = maxH + 'px';
+      imgEl.style.width = '100%';
+    }
+  });
+
+  // แสดงโฆษณาหลังโหลดหน้า 0.3 วิ
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', ()=> setTimeout(showAd, 300));
+  } else setTimeout(showAd, 300);
+})();
+</script>
+
+</body>
+</html>
+
+
 </body>
 </html>
