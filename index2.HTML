@@ -100,7 +100,7 @@
 
 <script>
 let rowToDelete = null;
-document.getElementById('goHome').addEventListener('click', ()=>{ window.location.href = 'x.html'; });
+document.getElementById('goHome').addEventListener('click', ()=>{ window.location.href = 'index.html'; });
 function getTableKey(table){ return 'expense_'+table.dataset.id; }
 function addRow(tbody, index, data={}){
   const tr = document.createElement('tr');
@@ -241,3 +241,4 @@ document.getElementById('sendWhatsapp').addEventListener('click', ()=>{
 </script>
 </body>
 </html>
+
